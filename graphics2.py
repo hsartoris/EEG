@@ -19,15 +19,15 @@ qualityRange=0
 
 pygame.init()
 #font = 
-size = width, height = 1200, 500
+size = width, height = 600, 500
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("EEG Values")
 
 values=[]
 qualities=[]
-xInc = 2
-dataLen = width/2
-dataList=[0]*dataLen
+#xInc = 2
+#dataLen = width/2
+dataList=[0]*width
 
 for i in range(0,len(locs)):
 	values.append(list(dataList))
@@ -71,8 +71,8 @@ def updateVals(headset):
 			updateMaxMin(values[i][currX], qualities[i][currX])
 	elif currX > 0:
 		for i in range(0, len(locs)):
-			values[i][currX] = values[i][currX - xInc]
-			qualities[i][currX]  = qualities[i][currX - xInc]
+			values[i][currX] = values[i][currX - 1]
+			qualities[i][currX]  = qualities[i][currX - 1]
 			updateMaxMin(values[i][currX], qualities[i][currX])
 	else:
 		for i in range(0, len(locs)):
@@ -88,20 +88,20 @@ with Emotiv() as headset:
 			if event.type == pygame.QUIT:
 				pygame.quit()
 		screen.fill((255,255,255))
-		if currX < width - xInc:
-			currX = currX + xInc
+		if currX < width - 1:
+			currX = currX + 1
 		else:
 			currX = 0
 		updateVals(headset)
-		for x in range(xInc,currX):
+		for x in range(1,currX):
 			# gonna assume min value is 0
 			for i in range(0, len(locs)):
 				### NEEDS REJIGGERING
-				pygame.draw.line(screen, BLACK, (x-xInc, valueToHeight(values[i][x-1])), (x, valueToHeight(values[i][x])))
+				pygame.draw.line(screen, BLACK, (x-1, valueToHeight(values[i][x-1])), (x, valueToHeight(values[i][x])))
 				#pygame.draw.line(screen, BLACK, (x-1, height / 2), (x, height / 2))
-		for x in range(currX + xInc, len(values[0])):
+		for x in range(currX + 2, len(values[0])):
 			for i in range(0, len(locs)):
-				pygame.draw.line(screen, BLACK, (x-xInc, valueToHeight(values[i][x-1])), (x, valueToHeight(values[i][x])))
+				pygame.draw.line(screen, BLACK, (x-1, valueToHeight(values[i][x-1])), (x, valueToHeight(values[i][x])))
 		pygame.display.flip()
 #		print(values)
 #		raw_input()
